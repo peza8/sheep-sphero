@@ -39,19 +39,21 @@ Subscribe to this topic to get an answerToken. Tokens are automatically publishe
 
 Subscribe to this topic to get clues to help you solve the riddle. Clues are published by MakerBot every 30 seconds. There are 6 clues to the riddle, but you might not need all of them to figure it out.
 
-Example message:
-  {
-    "clueIndex": 3,
-    "clue": "My hobbies include meowing and flying at Mach 1",
-    "totalClues": 6
-  }
+**Example message:**
+
+    {
+      "clueIndex": 3,
+      "clue": "My hobbies include meowing and flying at Mach 1",
+      "totalClues": 6
+    }
 
 
 ### `makers/challenge/answers`
 
 Publish to this topic to submit an answer to the riddle. You'll need to include a valid `answerToken` as well as your answer. It's recommended that you don't subscribe to this channel unless you want to see other maker's answer attempts, which may spoil the riddle.
 
-Example message:
+**Example message:**
+
     {
       "name": "Alan Turing",
       "answerToken": "abc123",
@@ -64,7 +66,8 @@ Example message:
 
 Subscribe to this topic to get feedback on why your published answer was rejected.
 
-Example message:
+**Example messages:**
+
     {
       "answererName": "Alan Turing",
       "error": "Your message is not valid JSON."
@@ -80,11 +83,12 @@ Example message:
   
 Subscribe to this topic to be notified when your answer is accepted as correct.
 
-Example message:
-  {
-    "answererName": "Alan Turing",
-    "result": "Congratulations, you solved the riddle!"
-  }
+**Example message:**
+
+    {
+      "answererName": "Alan Turing",
+      "result": "Congratulations, you solved the riddle!"
+    }
 
 
 ## Activity strategy
