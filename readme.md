@@ -1,7 +1,6 @@
-
 # PubSub with JavaScript on AWS
 
-In this activity, you'll use *JavaScript*, *nodeJS* and the *AWS JavaScript SDK* to subcribe and publish to multiple AWS topics in order to solve a riddle.
+In this activity, you'll use *JavaScript*, *nodeJS* and the *AWS JavaScript IoT SDK* to subcribe and publish to multiple AWS topics in order to solve a riddle.
 
 After solving the riddle, you'll be added to the **PubSub Hall of Fame** and your team will be notified of your great success on Slack :D
 
@@ -18,7 +17,7 @@ The following activities are recommended before attempting this one:
 1. Using git, clone this repo onto your local machine, then checkout your own personal branch named after your GitHub username. `git checkout -b myGitHubUsername`
 2. Add the certificates you generated from the prerequisite activity [Create a Thing on AWS Dashboard] to your activity folder, and link to them in `device.js` (when device is created)
 3. Make sure you have installed *nodeJS* and *npm*
-5. To install the AWS JavaScript SDK and nodemon, run `npm install` in the activity folder.
+5. To install the AWS IoT JavaScript SDK and nodemon, run `npm install` in the activity folder.
 6. In your favorite text editor, open `subscribe.js` and `publish.js` We've added some code to get you started, and you need to write the publish and subscribe code to help you solve the riddle and submit your solution.
 7. Run your subscribe and publish scripts with `node subscribe.js` and `node publish.js`
 
