@@ -79,7 +79,7 @@ Subscribe to this topic to get feedback on why your published answer was rejecte
     }
 
 
-### `makers/challenge/answers/correct`
+### `makers/challenge/answers/accepted`
   
 Subscribe to this topic to be notified when your answer is accepted as correct.
 
