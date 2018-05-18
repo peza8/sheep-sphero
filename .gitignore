@@ -1,3 +1,4 @@
 node_modules
 certificates/*
 TODO
+.DS_Store
