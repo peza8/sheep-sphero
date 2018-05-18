@@ -28,6 +28,7 @@ The following activities are recommended before attempting this one:
 
 Messages are published in *JSON format*. If you'd like to verify that your message is valid JSON, use *the linter tool*.
 
+It's important to note that other makers may be using the same topics at the same time, so keep an eye on the `answererName` property to verify which messages you receive apply to you.
 
 ### `makers/challenge/tokens`
 
@@ -51,7 +52,7 @@ Subscribe to this topic to get clues to help you solve the riddle. Clues are pub
     {
       "clueIndex": 3,
       "clue": "My hobbies include meowing and flying at Mach 1",
-      "totalClues": 6
+      "totalClues": 5
     }
 
 
