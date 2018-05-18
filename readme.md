@@ -15,11 +15,11 @@ The following activities are recommended before attempting this one:
 ## Getting started
 
 1. Using git, clone this repo onto your local machine, then checkout your own personal branch named after your GitHub username. `git checkout -b myGitHubUsername`
-2. Add the certificates you generated from the prerequisite activity [Create a Thing on AWS Dashboard] to your activity folder, and link to them in `device.js` (when device is created)
+2. Add the certificates you generated from the prerequisite activity [Create a Thing on AWS Dashboard] to the `certificates` folder in your activity directory, and link to them in `lib/publish.js` and `lib/subscribe.js`
 3. Make sure you have installed *nodeJS* and *npm*
 5. To install the AWS IoT JavaScript SDK and nodemon, run `npm install` in the activity folder.
-6. In your favorite text editor, open `subscribe.js` and `publish.js` We've added some code to get you started, and you need to write the publish and subscribe code to help you solve the riddle and submit your solution.
-7. Run your subscribe and publish scripts with `node subscribe.js` and `node publish.js`
+6. In your favorite text editor, open `lib/subscribe.js` and `lib/publish.js` We've added some code to get you started, and you need to write the publish and subscribe code to help you solve the riddle and submit your solution.
+7. Run your subscribe and publish scripts with `node lib/subscribe.js` and `node lib/publish.js`
 
 *nodemon?*
 
@@ -31,7 +31,15 @@ Messages are published in *JSON format*. If you'd like to verify that your messa
 
 ### `makers/challenge/tokens`
 
-Subscribe to this topic to get an `answerToken`. Tokens are automatically published by MakerBot every 60 seconds and are valid for 60 minutes. You'll use this token when publishing your riddle answer.
+Subscribe to this topic to get an `answerToken`. Tokens are automatically published by MakerBot every 30 seconds and are valid for 60 minutes. You'll use this token when publishing your riddle answer.
+
+**Example message:**
+
+    {
+      "answerToken": "abc123",
+      "expiresAt": "2018-04-01T09:30:00.000Z"
+    }
+
 
 
 ### `makers/challenge/clues`
@@ -79,7 +87,7 @@ Subscribe to this topic to get feedback on why your published answer was rejecte
 
 
 ### `makers/challenge/answers/accepted`
-  
+
 Subscribe to this topic to be notified when your answer is accepted as correct.
 
 **Example message:**
@@ -92,7 +100,11 @@ Subscribe to this topic to be notified when your answer is accepted as correct.
 
 ## Activity strategy
 
-Since you probably want to see incoming messages all the time, but only publish a message once you've solved the riddle, the code is split into two files `subscribe.js` and `publish.js`, which means you'll want to run two separate terminal tabs. Since we're using *nodemon*, you can boot up each script once and it will auto-reload when you update the source code.
+Since you probably want to see incoming messages all the time, but only publish a message once you've solved the riddle, the code is split into two files `lib/subscribe.js` and `lib/publish.js`, which means you'll want to run two separate terminal tabs.
+
+In practice, a single script will both publish and subscribe via the same `device` object, so this separation is simply to make the activity easier.
+
+We're using *nodemon*, so you can boot up each script once and it will auto-reload when you update the source code.
 
 
 ## Having issues?

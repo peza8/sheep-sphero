@@ -17,6 +17,8 @@
   "homepage": "https://github.com/OfferZen-Make/iot_robots-activity-pubsub_with_javascript#readme",
   "private": true,
   "dependencies": {
-    "aws-iot-device-sdk": "^2.2.1"
+    "aws-iot-device-sdk": "^2.2.1",
+    "moment": "^2.22.1",
+    "nodemon": "^1.17.4"
   }
 }
