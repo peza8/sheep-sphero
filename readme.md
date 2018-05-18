@@ -108,7 +108,7 @@ In practice, a single script will both publish and subscribe via the same `devic
 We're using *nodemon*, so you can boot up each script once and it will auto-reload when you update the source code.
 
 
-## Having issues?
+## Need a hand?
 
 We're here to help! If you get stuck, please ask for help on Make Slack in your team channel and tag a Make Master, @dan or @nic. You can also DM us, but it's more useful to keep comms public so that other team members can benefit too.
 
