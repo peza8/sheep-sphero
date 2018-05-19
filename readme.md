@@ -104,7 +104,7 @@ Since you probably want to see incoming messages all the time, but only publish 
 In practice, a single script will both publish and subscribe via the same `device` object, so this separation is simply to make the activity easier. Don't forget to restart the node processes after you edit the source files!
 
 
-## Having issues?
+## Need a hand?
 
 We're here to help! If you get stuck, please ask for help on Make Slack in your team channel and tag a Make Master, @dan or @nic. You can also DM us, but it's more useful to keep comms public so that other team members can benefit too.
 
