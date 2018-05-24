@@ -11,19 +11,25 @@ var sphero = require("sphero");
 class ColourController {
     constructor (mac_address){
         this.bb8 = sphero("F5:77:55:BE:40:A2");
-        this.Init();
     }
 
     Init(){
         var self = this;
-        console.log("Initing the device");
         this.bb8.connect(function() {
             self.bb8.color("red");
         });
+        console.log("COLOUR:Initialised the device");
     }
 
     SetColour(color) {
-        this.bb8.color(color);
+        this.bb8.color(color)
+            .then(() => {
+                console.log(`COLOUR: Set to: ${color}`);
+            }) 
+
+            .catch(error => {
+                console.log(`COLOUR: Error setting colour - ${error}`);
+            });
     }
 }
 

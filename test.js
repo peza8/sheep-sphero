@@ -1,18 +1,9 @@
 var sphero = require("sphero");
-var MobilityDriver  = require("./src/MobilityDriver");
+// var MobilityDriver  = require("./src/MobilityDriver");
 var keypress = require("keypress");
 
 var mobility = new MobilityDriver("F5:77:55:BE:40:A2");
 
-function speedCallback (speed){
-  console.log(speed);
-}
-
-function positionCallback (x, y){
-  console.log(x, y);
-}
-
-mobility.Init(speedCallback, positionCallback);
 
 function handle(ch, key) {
   if (key.ctrl && key.name === "c") {
@@ -46,14 +37,12 @@ function handle(ch, key) {
   }
 }
 
-function listen() {
+exports.function listen() {
   keypress(process.stdin);
   process.stdin.on("keypress", handle);
 
-  console.log("starting to listen for arrow key presses");
+  console.log("KEY: starting to listen for arrow key presses");
 
   process.stdin.setRawMode(true);
   process.stdin.resume();
-}
-
-listen();
+};

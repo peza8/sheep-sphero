@@ -7,6 +7,7 @@
  */
 
 var sphero = require("sphero");
+var keypress = require("keypress");
 
 class MobilityDriver {
     constructor (mac_address){
@@ -28,10 +29,16 @@ class MobilityDriver {
                 self.bb8.startCalibration();
             });
             
-            // setInterval(function() {
-            //     speedCallback(10);
-            //     positionCallback(10, 200);
-            // }, 500);
+            setInterval(function() {
+                console.log("MOBILITY:Sending data");
+                updateCallback({
+                    speed : 1,
+                    x : 11,
+                    y : 12
+                });
+            }, 500);
+            self.listen(self);
+            console.log("MOBILITY:Initialised the device");
         });
     }
 
@@ -46,6 +53,49 @@ class MobilityDriver {
     stop(){
         this.bb8.roll(0,0)
     }
+    
+    handle(ch, key) {
+        if (key.ctrl && key.name === "c") {
+        process.stdin.pause();
+        process.exit();
+        }
+    
+        if (key.name === "up") {
+            this.roll(0);
+        }
+    
+        if (key.name === "down") {
+            this.roll(180);
+        }
+    
+        if (key.name === "left") {
+            this.roll(270);
+        }
+    
+        if (key.name === "right") {
+            this.roll(90);
+        }
+    
+        if (key.name === "space") {
+            this.stop();
+        }
+    
+        if (key.name === "q") {
+            console.log("Calibrated!");  
+            this.Calibrate();
+        }
+  }
+  
+  listen(self) {
+	keypress(process.stdin);
+	process.stdin.on("keypress", self.handle);
+  
+	console.log("KEY: starting to listen for arrow key presses");
+  
+	process.stdin.setRawMode(true);
+	process.stdin.resume();
+  };
+
 }
 
 module.exports = MobilityDriver;
