@@ -20,7 +20,8 @@ const spheroType = {
 
 // Class level constants
 const subTopics = {0: ['makers/challenge/clues'],
-                   1: ['sheep/follower/test']};
+                   1: ['sheep/follower/test',
+                       'sheep/leader/update']};
 
 class PubSubInterface {
   
@@ -40,7 +41,7 @@ class PubSubInterface {
          keyPath: 'certs_follower/1fa768eb95-private.pem.key',
         certPath: 'certs_follower/1fa768eb95-certificate.pem.crt',
           caPath: 'certs_follower/root-ca.pem',
-        clientId: `${username}-subscribe`,
+        clientId: `${username}-follower`,
             host: 'a2yujzh40clf9c.iot.us-east-2.amazonaws.com' 
       });
     } 
@@ -48,11 +49,11 @@ class PubSubInterface {
     else {
       // Todo
       this.device = awsIot.device({
-         keyPath: '',
-        certPath: '',
-          caPath: '',
-        clientId: ``,
-            host: '' 
+         keyPath: 'certs_leader/private.pem.key',
+        certPath: 'certs_leader/certificate.pem.crt',
+          caPath: 'certs_leader/ca.pem',
+        clientId: `${username}-leader`,
+            host: 'a2yujzh40clf9c.iot.us-east-2.amazonaws.com' 
       });
     }
 
@@ -89,7 +90,12 @@ class PubSubInterface {
       case 'sheep/follower/test':
         console.log('PUBSUB: Got a message from houston!');
         break;
-         
+
+      case 'sheep/leader/update':
+        console.log('PUBSUB: Received update from leader');
+        this.updateFollowerWithMetric(message);
+        break;
+
       default:
         console.log(`Message received on topic "${topic}"`)
     }
@@ -97,20 +103,24 @@ class PubSubInterface {
 
   /* ----------------------------------------------------------
    *
+   *                  Message Response Section
+   *
+     ---------------------------------------------------------- */
+
+  setupColorUpdator(callback) {
+    this.updateFollowerWithMetric = callback;
+  }
+     
+  /* ----------------------------------------------------------
+   *
    *                      Publishing Section
    *
      ---------------------------------------------------------- */
 
-    publishMsg(topic, message, token){
+    publishMsg(topic, messageJSON){
       console.log(`PUBSUB: Publishing ${message} to topic ${topic}`);
-
-      /*
-      this.device.publish(topic, JSON.stringify({
-      });
-      */
+      this.device.publish(topic, JSON.stringify({messageJSON}));
     }
-
-
 }
 
 module.exports = PubSubInterface;

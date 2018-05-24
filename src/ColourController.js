@@ -11,6 +11,7 @@ var sphero = require("sphero");
 class ColourController {
     constructor (mac_address){
         this.bb8 = sphero("F5:77:55:BE:40:A2");
+        this.Init();
     }
 
     Init(){

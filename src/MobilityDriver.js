@@ -12,7 +12,7 @@ class MobilityDriver {
     constructor (mac_address){
         this.bb8 = sphero("F5:77:55:BE:40:A2");
     }
-    Init(speedCallback, positionCallback){
+    Init(updateCallback){
         var self = this;
         console.log("Initing the device");
         this.bb8.connect(function() {
