@@ -11,79 +11,115 @@ const MobilityDriver  = require('./MobilityDriver.js');
 const ColourController  = require('./ColourController.js');
 const F = "FA:34:A8:E7:D4:A7";
 const D = 'F5:77:55:BE:40:A2';
+var stdin = process.openStdin();
+var sphero = -1;	// default
 
-
+// Pseudo enum for Sphero type
 const spheroType = {
  	"leader": 		0,
  	"follower": 	1
 }
 
-// Set the sphero type here
-const sphero = spheroType.leader;
-const macAddress = sphero ===spheroType.leader ? F : D;
+// Get the type from the user running the code
+console.log("What kind of sphero are you flashing to? \nLeader:\t\t0\nFollower:\t1");
 
-// Create a pubsub interface & give it a callback for 
-const pubsub = new PubSubInterface(sphero);
-const mobilityDriver = new MobilityDriver(macAddress);
-const colorDriver = new ColourController(macAddress);
+stdin.addListener("data", function(d) {
+    // note:  d is an object, and when converted to a string it will
+    // end with a linefeed.  so we (rather crudely) account for that  
+    // with toString() and then trim()
+    const userEntry = d.toString().trim(); 
+    console.log("you entered: [" + userEntry + "]");
 
-/*
- * On init of the mobility driver pass it the 
- * callback to fire when it updates it's speed 
- * and position
- */
-if(sphero === spheroType.leader) {
-	mobilityDriver.Init(metrics => {
-		console.log(JSON.stringify(metrics));
+    if (sphero === -1){
+    	// Sphero isn't set up yet, try set it
+    	numEntry = Number(d);
+    	if (numEntry === 0) {
+    		// This is a leader
+    		console.log(`CONTROLLER: Setting up leader`);
+    		sphero = spheroType.leader;
+    		startSphero();
+    	}
 
-		// Get position and speed
-		const speed = metrics.speed;
-		const xNew = metrics.x;
-		const yNew = metrics.y;
+    	else if (numEntry === 1) {
+    		console.log(`CONTROLLER: Setting up follower`);
+    		sphero = spheroType.follower;
+    		startSphero();
+    	}
 
-		// Publish update with this info
-		const pubObj = {
-			message: "Hey, this is what I'm doing",
-			x: xNew,
-			y: yNew};
+    	else {
+    		console.log(`Hmmm, invalid entry ${numEntry}, please try again`);
+    	}
+    }
+ });
 
-		pubsub.publishMsg('sheep/leader/update', pubObj);
+startSphero = function() {
+	// Set the sphero type here
+	const macAddress = sphero ===spheroType.leader ? F : D;
+
+	// Create a pubsub interface & give it a callback for 
+	const pubsub = new PubSubInterface(sphero);
+	const mobilityDriver = new MobilityDriver(macAddress);
+	const colorDriver = new ColourController(macAddress);
+
+	/*
+	 * On init of the mobility driver pass it the 
+	 * callback to fire when it updates it's speed 
+	 * and position
+	 */
+	if(sphero === spheroType.leader) {
+		mobilityDriver.Init(metrics => {
+			console.log(JSON.stringify(metrics));
+
+			// Get position and speed
+			const speed = metrics.speed;
+			const xNew = metrics.x;
+			const yNew = metrics.y;
+
+			// Publish update with this info
+			const pubObj = {
+				message: "Hey, this is what I'm doing",
+				x: xNew,
+				y: yNew};
+
+			pubsub.publishMsg('sheep/leader/update', pubObj);
+		});
+	}
+	else {
+		colorDriver.Init();
+	}
+	/*
+	 * 	Metrics comes directly from PubSub JSON
+	 *  Position: (use x, y) -> set value based on quadrants
+	 */
+
+	pubsub.setupColorUpdator(metrics => {
+		// Get x - y value
+		const x = metrics.messageJSON.x;
+		const y = metrics.messageJSON.y;
+		var colour;
+		console.log(`x=${x},y=${y}`);
+		// Set colour based on quadrant
+		if (x >= 0) {
+			if (y >= 0) {
+				// Quad 1
+				colour = 'red';
+			} else {
+				// Quad 2
+				colour = 'blue';
+			}
+		} else {
+			if (y >= 0) {
+				// Quad 3
+				colour = 'green';
+			} else {
+				// Quad 4
+				colour = 'orange';
+			}
+		}
+
+		// Call the colour update method on the sphero
+		console.log(`CONTROLLER: Setting follower to ${colour}`);
+		colorDriver.SetColour(colour);
 	});
 }
-else {
-	colorDriver.Init();
-}
-/*
- * 	Metrics comes directly from PubSub JSON
- *  Position: (use x, y) -> set value based on quadrants
- */
 
-pubsub.setupColorUpdator(metrics => {
-	// Get x - y value
-	const x = metrics.messageJSON.x;
-	const y = metrics.messageJSON.y;
-	var colour;
-	console.log(`x=${x},y=${y}`);
-	// Set colour based on quadrant
-	if (x >= 0) {
-		if (y >= 0) {
-			// Quad 1
-			colour = 'red';
-		} else {
-			// Quad 2
-			colour = 'blue';
-		}
-	} else {
-		if (y >= 0) {
-			// Quad 3
-			colour = 'green';
-		} else {
-			// Quad 4
-			colour = 'orange';
-		}
-	}
-
-	// Call the colour update method on the sphero
-	console.log(`CONTROLLER: Setting follower to ${colour}`);
-	colorDriver.SetColour(colour);
-});
