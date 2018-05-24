@@ -8,12 +8,14 @@
 
 var sphero = require("sphero");
 var keypress = require("keypress");
+const collisionColor  = ['red','blue','green','purple','yellow'];
 
 class MobilityDriver {
     constructor (mac_address){
         this.bb8 = sphero(mac_address);
         this.speed=20;
-        this.distance = 0;
+        this.instantSpeed = 0;
+        this.colourIndex = 0;
     }
     Init(updateCallback){
         var self = this;
@@ -31,21 +33,6 @@ class MobilityDriver {
                 self.bb8.startCalibration();
             });
             
-            self.bb8.streamOdometer();
-
-            self.bb8.on("odometer", function(data) {
-                self.distance = Math.abs(data.xOdometer.value[0]) +  Math.abs(data.yOdometer.value[0]);
-                if(self.distance > 400){
-                    self.distance = 0;
-                }
-                console.log("MOBILITY: distance:", self.distance);
-            });
-
-            self.bb8.on("collision", function(data) {
-                console.log("collision detected");
-                self.distance = self.distance/2;
-            });
-
             setInterval(function() {
                 // console.log("MOBILITY:Sending data");
                 self.bb8.readLocator(function(err, data) {
@@ -57,16 +44,25 @@ class MobilityDriver {
                     //   console.log("  ypos:", data.ypos);
                     //   console.log("  xvel:", data.xvel);
                     //   console.log("  yvel:", data.yvel);
-                    //   console.log("  sog:", data.sog);
-                      updateCallback({
-                        speed : 1,
-                        x : data.xpos,
-                        y : data.ypos
-                    });
+                    if(data.sog < 60000){
+                        console.log("  sog:", data.sog);
+                        if(self.instantSpeed-data.sog > 30)
+                        {
+                          console.log("collided");
+                          self.colourIndex = self.colourIndex + 1;
+                          self.bb8.color(collisionColor[self.colourIndex % 4]);  
+                        }
+                        self.instantSpeed = data.sog;
                     }
-                    self.bb8.color(self.distance*40000);               
+                        updateCallback({
+                            speed : 1,
+                            x : data.xpos,
+                            y : data.ypos
+                        });
+                    }
+                                 
                 });
-            }, 500);
+            }, 100);
             self.listen(self);
             console.log("MOBILITY:Initialised the device");
         });
