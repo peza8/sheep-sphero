@@ -54,7 +54,7 @@ class MobilityDriver {
         this.bb8.roll(0,0)
     }
     
-    handle(ch, key) {
+    handle  (ch, key) {
         if (key.ctrl && key.name === "c") {
         process.stdin.pause();
         process.exit();
@@ -88,7 +88,37 @@ class MobilityDriver {
   
   listen(self) {
 	keypress(process.stdin);
-	process.stdin.on("keypress", self.handle);
+	process.stdin.on("keypress",(ch, key) => {
+        if (key.ctrl && key.name === "c") {
+        process.stdin.pause();
+        process.exit();
+        }
+    
+        if (key.name === "up") {
+            this.roll(0);
+        }
+    
+        if (key.name === "down") {
+            this.roll(180);
+        }
+    
+        if (key.name === "left") {
+            this.roll(270);
+        }
+    
+        if (key.name === "right") {
+            this.roll(90);
+        }
+    
+        if (key.name === "space") {
+            this.stop();
+        }
+    
+        if (key.name === "q") {
+            console.log("Calibrated!");  
+            this.Calibrate();
+        }
+    });
   
 	console.log("KEY: starting to listen for arrow key presses");
   
