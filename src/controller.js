@@ -84,42 +84,50 @@ startSphero = function() {
 			pubsub.publishMsg('sheep/leader/update', pubObj);
 		});
 	}
+
 	else {
 		colorDriver.Init();
+
+		/*
+		 * 	Metrics comes directly from PubSub JSON
+		 *  Position: (use x, y) -> set value based on quadrants
+		 */
+
+		pubsub.setupColorUpdator(metrics => {
+			// Get x - y value
+			const x = metrics.messageJSON.x;
+			const y = metrics.messageJSON.y;
+			var colour;
+			console.log(`x=${x},y=${y}`);
+			// Set colour based on quadrant
+			if (x >= 0) {
+				if (y >= 0) {
+					// Quad 1
+					colour = 'red';
+				} else {
+					// Quad 2
+					colour = 'blue';
+				}
+			} else {
+				if (y >= 0) {
+					// Quad 3
+					colour = 'green';
+				} else {
+					// Quad 4
+					colour = 'orange';
+				}
+			}
+
+			// Call the colour update method on the sphero
+			console.log(`CONTROLLER: Setting follower to ${colour}`);
+			colorDriver.SetColour(colour);
+		});
+
+		pubsub.setupManualColorUpdator(message => {
+			// Manually update the colour here
+			console.log(`CONTROLLER: Setting colour to ${message.colour}`);
+			colorDriver.SetColour(message.colour);
+		});
 	}
-	/*
-	 * 	Metrics comes directly from PubSub JSON
-	 *  Position: (use x, y) -> set value based on quadrants
-	 */
-
-	pubsub.setupColorUpdator(metrics => {
-		// Get x - y value
-		const x = metrics.messageJSON.x;
-		const y = metrics.messageJSON.y;
-		var colour;
-		console.log(`x=${x},y=${y}`);
-		// Set colour based on quadrant
-		if (x >= 0) {
-			if (y >= 0) {
-				// Quad 1
-				colour = 'red';
-			} else {
-				// Quad 2
-				colour = 'blue';
-			}
-		} else {
-			if (y >= 0) {
-				// Quad 3
-				colour = 'green';
-			} else {
-				// Quad 4
-				colour = 'orange';
-			}
-		}
-
-		// Call the colour update method on the sphero
-		console.log(`CONTROLLER: Setting follower to ${colour}`);
-		colorDriver.SetColour(colour);
-	});
 }
 
