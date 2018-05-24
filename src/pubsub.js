@@ -19,7 +19,7 @@ const spheroType = {
 }
 
 // Class level constants
-const subTopics = {0: ['makers/challenge/clues'],
+const subTopics = {0: [],
                    1: ['sheep/follower/test',
                        'sheep/leader/update']};
 
