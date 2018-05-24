@@ -2,13 +2,20 @@
  *  OfferZen Make Day 24 May 2018
  *  Team: Brandon Piner, Josh Perry, Jason Hady
  *
+ *  Colour: Class to take inputs and set colour of sphero
+ *  Author: Jason Hardy
+ */
+/*
+ *  OfferZen Make Day 24 May 2018
+ *  Team: Brandon Piner, Josh Perry, Jason Hady
+ *
  *  Driver: Class to take inputs and drive the sphero
  *  Author: Brandon Piner
  */
 
 var sphero = require("sphero");
 
-class MobilityDriver {
+class ColourController {
     constructor (mac_address){
         this.bb8 = sphero("F5:77:55:BE:40:A2");
     }
