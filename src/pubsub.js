@@ -1,6 +1,6 @@
 /*
  *  OfferZen Make Day 24 May 2018
- *  Team: Brandon Piner, Josh Perry, Jason Hady
+ *  Team: Brandon Piner, Josh Perry, Jason Hardy
  *
  *  PubSub: Network layer to interface with the AWS console
  *  Author: Peza
@@ -21,7 +21,8 @@ const spheroType = {
 // Class level constants
 const subTopics = {0: [],
                    1: ['sheep/follower/test',
-                       'sheep/leader/update']};
+                       'sheep/leader/update',
+                       'sheep/follower/override_colour']};
 
 class PubSubInterface {
   
@@ -97,6 +98,11 @@ class PubSubInterface {
         this.updateFollowerWithMetric(message);
         break;
 
+      case 'sheep/follower/override_colour':
+        console.log('PUBSUB: Received manual colour override');
+        this.manualColourCallback(message);
+        break;
+
       default:
         console.log(`Message received on topic "${topic}"`)
     }
@@ -110,6 +116,10 @@ class PubSubInterface {
 
   setupColorUpdator(callback) {
     this.updateFollowerWithMetric = callback;
+  }
+
+  setupManualColorUpdator(callback) {
+    this.manualColourCallback = callback;
   }
      
   /* ----------------------------------------------------------
