@@ -27,10 +27,10 @@ class MobilityDriver {
             bb8.roll(7,0);
             speedCallback(10);
             positionCallback(10, 200);
-            // setInterval(function() {
-            //     var direction = 0;
-            //     bb8.roll(10, direction);
-            // }, 500);
+            setInterval(function() {
+                var direction = 0;
+                bb8.roll(10, direction);
+            }, 500);
         });
     }
 }
