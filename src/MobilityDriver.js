@@ -13,6 +13,7 @@ class MobilityDriver {
     constructor (mac_address){
         this.bb8 = sphero(mac_address);
         this.speed=20;
+        this.distance = 0;
     }
     Init(updateCallback){
         var self = this;
@@ -30,26 +31,41 @@ class MobilityDriver {
                 self.bb8.startCalibration();
             });
             
+            self.bb8.streamOdometer();
+
+            self.bb8.on("odometer", function(data) {
+                self.distance = Math.abs(data.xOdometer.value[0]) +  Math.abs(data.yOdometer.value[0]);
+                if(self.distance > 400){
+                    self.distance = 0;
+                }
+                console.log("MOBILITY: distance:", self.distance);
+            });
+
+            self.bb8.on("collision", function(data) {
+                console.log("collision detected");
+                self.distance = self.distance/2;
+            });
+
             setInterval(function() {
-                console.log("MOBILITY:Sending data");
+                // console.log("MOBILITY:Sending data");
                 self.bb8.readLocator(function(err, data) {
                     if (err) {
                       console.log("error: ", err);
                     } else {
-                      console.log("readLocator:");
-                      console.log("  xpos:", data.xpos);
-                      console.log("  ypos:", data.ypos);
-                      console.log("  xvel:", data.xvel);
-                      console.log("  yvel:", data.yvel);
-                      console.log("  sog:", data.sog);
+                    //   console.log("readLocator:");
+                    //   console.log("  xpos:", data.xpos);
+                    //   console.log("  ypos:", data.ypos);
+                    //   console.log("  xvel:", data.xvel);
+                    //   console.log("  yvel:", data.yvel);
+                    //   console.log("  sog:", data.sog);
                       updateCallback({
                         speed : 1,
                         x : data.xpos,
                         y : data.ypos
                     });
                     }
-                  });
-               
+                    self.bb8.color(self.distance*40000);               
+                });
             }, 500);
             self.listen(self);
             console.log("MOBILITY:Initialised the device");
@@ -71,43 +87,46 @@ class MobilityDriver {
   listen(self) {
 	keypress(process.stdin);
 	process.stdin.on("keypress",(ch, key) => {
-        if (key.ctrl && key.name === "c") {
-        process.stdin.pause();
-        process.exit();
-        }
-    
-        if (key.name === "m") {
-            this.speed+=5;
-        }
-        
-        if (key.name === "n") {
-            this.speed-=5;
-        }
+        try{
+            if (key.ctrl && key.name === "c") {
+            process.stdin.pause();
+            process.exit();
+            }
+            if (key.name === "m") {
+                this.speed+=5;
+            }
+            
+            if (key.name === "n") {
+                this.speed-=5;
+            }
 
-        if (key.name === "up") {
-            this.roll(0);
+            if (key.name === "up") {
+                this.roll(0);
+            }
+        
+            if (key.name === "down") {
+                this.roll(180);
+            }
+        
+            if (key.name === "left") {
+                this.roll(270);
+            }
+        
+            if (key.name === "right") {
+                this.roll(90);
+            }
+        
+            if (key.name === "space") {
+                this.stop();
+            }
+        
+            if (key.name === "q") {
+                console.log("Calibrated!");  
+                this.Calibrate();
+            }
+            
         }
-    
-        if (key.name === "down") {
-            this.roll(180);
-        }
-    
-        if (key.name === "left") {
-            this.roll(270);
-        }
-    
-        if (key.name === "right") {
-            this.roll(90);
-        }
-    
-        if (key.name === "space") {
-            this.stop();
-        }
-    
-        if (key.name === "q") {
-            console.log("Calibrated!");  
-            this.Calibrate();
-        }
+        catch(e){};
     });
   
 	console.log("KEY: starting to listen for arrow key presses");

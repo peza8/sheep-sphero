@@ -119,7 +119,7 @@ class PubSubInterface {
      ---------------------------------------------------------- */
 
     publishMsg(topic, messageJSON){
-      console.log(`PUBSUB: Publishing ${messageJSON} to topic ${topic}`);
+      // console.log(`PUBSUB: Publishing ${messageJSON} to topic ${topic}`);
       this.device.publish(topic, JSON.stringify({messageJSON}));
     }
 }
