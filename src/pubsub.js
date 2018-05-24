@@ -93,6 +93,7 @@ class PubSubInterface {
 
       case 'sheep/leader/update':
         console.log('PUBSUB: Received update from leader');
+        console.log(payload);
         this.updateFollowerWithMetric(message);
         break;
 

@@ -11,7 +11,8 @@ var keypress = require("keypress");
 
 class MobilityDriver {
     constructor (mac_address){
-        this.bb8 = sphero("F5:77:55:BE:40:A2");
+        this.bb8 = sphero(mac_address);
+        this.speed=20;
     }
     Init(updateCallback){
         var self = this;
@@ -31,11 +32,24 @@ class MobilityDriver {
             
             setInterval(function() {
                 console.log("MOBILITY:Sending data");
-                updateCallback({
-                    speed : 1,
-                    x : 11,
-                    y : 12
-                });
+                self.bb8.readLocator(function(err, data) {
+                    if (err) {
+                      console.log("error: ", err);
+                    } else {
+                      console.log("readLocator:");
+                      console.log("  xpos:", data.xpos);
+                      console.log("  ypos:", data.ypos);
+                      console.log("  xvel:", data.xvel);
+                      console.log("  yvel:", data.yvel);
+                      console.log("  sog:", data.sog);
+                      updateCallback({
+                        speed : 1,
+                        x : data.xpos,
+                        y : data.ypos
+                    });
+                    }
+                  });
+               
             }, 500);
             self.listen(self);
             console.log("MOBILITY:Initialised the device");
@@ -47,45 +61,13 @@ class MobilityDriver {
     }
 
     roll(direction){
-        this.bb8.roll(10, direction);
+        this.bb8.roll(this.speed, direction);
     }
 
     stop(){
         this.bb8.roll(0,0)
     }
     
-    handle  (ch, key) {
-        if (key.ctrl && key.name === "c") {
-        process.stdin.pause();
-        process.exit();
-        }
-    
-        if (key.name === "up") {
-            this.roll(0);
-        }
-    
-        if (key.name === "down") {
-            this.roll(180);
-        }
-    
-        if (key.name === "left") {
-            this.roll(270);
-        }
-    
-        if (key.name === "right") {
-            this.roll(90);
-        }
-    
-        if (key.name === "space") {
-            this.stop();
-        }
-    
-        if (key.name === "q") {
-            console.log("Calibrated!");  
-            this.Calibrate();
-        }
-  }
-  
   listen(self) {
 	keypress(process.stdin);
 	process.stdin.on("keypress",(ch, key) => {
@@ -94,6 +76,14 @@ class MobilityDriver {
         process.exit();
         }
     
+        if (key.name === "m") {
+            this.speed+=5;
+        }
+        
+        if (key.name === "n") {
+            this.speed-=5;
+        }
+
         if (key.name === "up") {
             this.roll(0);
         }

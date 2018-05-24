@@ -9,7 +9,8 @@
 const PubSubInterface = require('./pubsub.js');
 const MobilityDriver  = require('./MobilityDriver.js');
 const ColourController  = require('./ColourController.js');
-const macAddress = ['F5:77:55:BE:40:A2', 'FA:34:A8:E7:D4:A7'];
+const F = "FA:34:A8:E7:D4:A7";
+const D = 'F5:77:55:BE:40:A2';
 
 
 const spheroType = {
@@ -19,11 +20,12 @@ const spheroType = {
 
 // Set the sphero type here
 const sphero = spheroType.leader;
+const macAddress = sphero ===spheroType.leader ? F : D;
 
 // Create a pubsub interface & give it a callback for 
 const pubsub = new PubSubInterface(sphero);
-const mobilityDriver = new MobilityDriver(macAddress[sphero]);
-const colorDriver = new ColourController(macAddress[sphero]);
+const mobilityDriver = new MobilityDriver(macAddress);
+const colorDriver = new ColourController(macAddress);
 
 /*
  * On init of the mobility driver pass it the 
@@ -32,6 +34,8 @@ const colorDriver = new ColourController(macAddress[sphero]);
  */
 if(sphero === spheroType.leader) {
 	mobilityDriver.Init(metrics => {
+		console.log(JSON.stringify(metrics));
+
 		// Get position and speed
 		const speed = metrics.speed;
 		const xNew = metrics.x;
@@ -56,10 +60,10 @@ else {
 
 pubsub.setupColorUpdator(metrics => {
 	// Get x - y value
-	const x = metrics.x;
-	const y = metrics.y;
+	const x = metrics.messageJSON.x;
+	const y = metrics.messageJSON.y;
 	var colour;
-
+	console.log(`x=${x},y=${y}`);
 	// Set colour based on quadrant
 	if (x >= 0) {
 		if (y >= 0) {
